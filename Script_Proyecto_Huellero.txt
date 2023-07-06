@@ -1,0 +1,82 @@
+USE [Proyecto_Huellero]
+GO
+/****** Object:  Table [dbo].[registrar_usuarios]    Script Date: 15-06-2023 12:12:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[registrar_usuarios](
+	[id_usuario] [int] IDENTITY(1,1) NOT NULL,
+	[nombre] [varchar](50) NULL,
+	[apellido] [varchar](50) NULL,
+	[rut] [varchar](9) NULL,
+	[contrasena] [varchar](15) NULL,
+	[hora_inicio] [datetime] NULL,
+	[hora_fin] [datetime] NULL,
+	[rango] [varchar](15) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id_usuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[usuario]    Script Date: 15-06-2023 12:12:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[usuario](
+	[id_usuario] [int] IDENTITY(1,1) NOT NULL,
+	[rut] [varchar](12) NULL,
+	[nombre] [varchar](50) NULL,
+	[apellido] [varchar](50) NULL,
+	[password] [varchar](100) NULL,
+	[fecha_nac] [date] NULL,
+	[rango] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id_usuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  StoredProcedure [dbo].[RegistrarUsuario]    Script Date: 15-06-2023 12:12:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[RegistrarUsuario]
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @Rut VARCHAR(9),
+    @Contraseña VARCHAR(15),
+    @HoraInicio DATETIME,
+    @HoraFin DATETIME,
+    @Rango VARCHAR(15)
+AS
+BEGIN
+    INSERT INTO registrar_usuarios (nombre, apellido, rut, contrasena, hora_inicio, hora_fin, rango)
+    VALUES (@Nombre, @Apellido, @Rut, @Contraseña, @HoraInicio, @HoraFin, @Rango)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[VerificarCredenciales]    Script Date: 15-06-2023 12:12:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[VerificarCredenciales]
+    @NombreUsuario VARCHAR(50),
+    @Contraseña VARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS(SELECT 1 FROM usuario WHERE nombre = @NombreUsuario AND password = @Contraseña)
+    BEGIN
+        SELECT 1 AS Resultado; -- Credenciales válidas
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS Resultado; -- Credenciales inválidas
+    END
+END
+GO
